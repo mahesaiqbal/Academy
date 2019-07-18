@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
+import com.mahesaiqbal.academy.data.CourseEntity
 import com.mahesaiqbal.academy.utils.DataDummy
+import com.mahesaiqbal.academy.ui.academy.AcademyAdapter.AcademyFragmentCallback
 import kotlinx.android.synthetic.main.fragment_academy.*
 
-class AcademyFragment : Fragment() {
+class AcademyFragment : Fragment(), AcademyFragmentCallback {
 
     lateinit var academyAdapter: AcademyAdapter
 
@@ -35,13 +37,17 @@ class AcademyFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            academyAdapter = AcademyAdapter(activity!!, DataDummy.generateDummyCourses())
+            academyAdapter = AcademyAdapter(activity!!, DataDummy.generateDummyCourses(), this)
 
-            apply {
-                rv_academy.layoutManager = LinearLayoutManager(context)
-                rv_academy.setHasFixedSize(true)
-                rv_academy.adapter = academyAdapter
+            rv_academy.apply {
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(true)
+                adapter = academyAdapter
             }
         }
+    }
+
+    override fun onItemClick(courseEntity: CourseEntity) {
+
     }
 }

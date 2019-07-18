@@ -9,12 +9,11 @@ import androidx.fragment.app.FragmentTransaction
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.ui.academy.AcademyFragment
 import com.mahesaiqbal.academy.ui.bookmark.BookmarkFragment
+import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        var fragment: Fragment? = null
-
         when (item.itemId) {
             R.id.action_home -> {
                 loadFragment(AcademyFragment.newInstance())
@@ -32,11 +31,19 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        
-        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-        loadFragment(AcademyFragment.newInstance())
+        nav_view.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+
+        if (savedInstanceState != null) {
+            savedInstanceState.getInt("selected_menu")
+        } else {
+            nav_view.selectedItemId = R.id.action_home
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt("selected_menu", nav_view.selectedItemId)
     }
 
     private fun loadFragment(fragment: Fragment) {

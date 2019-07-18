@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.CourseEntity
 import com.mahesaiqbal.academy.utils.DataDummy
+import com.mahesaiqbal.academy.ui.bookmark.BookmarkAdapter.BookmarkFragmentCallback
 import kotlinx.android.synthetic.main.fragment_bookmark.*
 
-class BookmarkFragment : Fragment(), BookmarkAdapter.BookmarkFragmentCallback {
+class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
 
     lateinit var bookmarkAdapter: BookmarkAdapter
 
@@ -39,10 +40,10 @@ class BookmarkFragment : Fragment(), BookmarkAdapter.BookmarkFragmentCallback {
         if (activity != null) {
             bookmarkAdapter = BookmarkAdapter(activity!!, DataDummy.generateDummyCourses(), this)
 
-            apply {
-                rv_bookmark.layoutManager = LinearLayoutManager(context)
-                rv_bookmark.setHasFixedSize(true)
-                rv_bookmark.adapter = bookmarkAdapter
+            rv_bookmark.apply {
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(true)
+                adapter = bookmarkAdapter
             }
         }
     }

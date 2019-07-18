@@ -17,7 +17,7 @@ import com.mahesaiqbal.academy.ui.academy.AcademyAdapter.AcademyViewHolder
 import com.mahesaiqbal.academy.ui.detail.DetailCourseActivity
 import kotlinx.android.synthetic.main.items_academy.view.*
 
-class AcademyAdapter(var activity: Activity, var mCourses: ArrayList<CourseEntity>)
+class AcademyAdapter(var activity: Activity, var mCourses: ArrayList<CourseEntity>, var callback: AcademyFragmentCallback)
     : Adapter<AcademyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademyViewHolder
@@ -48,5 +48,9 @@ class AcademyAdapter(var activity: Activity, var mCourses: ArrayList<CourseEntit
             intentDetail.putExtra("extra_course", courseEntity.courseId)
             activity.startActivity(intentDetail)
         }
+    }
+
+    interface AcademyFragmentCallback {
+        fun onItemClick(courseEntity: CourseEntity)
     }
 }
