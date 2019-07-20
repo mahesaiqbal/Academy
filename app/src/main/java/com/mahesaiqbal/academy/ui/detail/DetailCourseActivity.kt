@@ -36,9 +36,10 @@ class DetailCourseActivity : AppCompatActivity() {
 
         val extras: Bundle? = intent.extras
         if (extras != null) {
-            var courseId = extras.getString("extra_course")
+            val courseId = extras.getString("extra_course")
             if (courseId != null) {
-                detailCourseViewModel.courseId = courseId
+                detailCourseViewModel.setCourseIdValue(courseId)
+                Log.d("courseIdDetail", courseId)
                 modules = detailCourseViewModel.getModules()
                 detailCourseAdapter = DetailCourseAdapter(modules as ArrayList<ModuleEntity>)
             }
@@ -68,12 +69,12 @@ class DetailCourseActivity : AppCompatActivity() {
             .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
             .into(image_poster)
 
-        btn_start.setOnClickListener { v -> goToCourseReader(detailCourseViewModel.courseId!!) }
+        btn_start.setOnClickListener { v -> goToCourseReader() }
     }
 
-    fun goToCourseReader(id: String) {
+    fun goToCourseReader() {
         val intent = Intent(this, CourseReaderActivity::class.java)
-        intent.putExtra("extra_course_id", id)
+        intent.putExtra("extra_course_id", detailCourseViewModel.getCourseIdValue())
         startActivity(intent)
     }
 

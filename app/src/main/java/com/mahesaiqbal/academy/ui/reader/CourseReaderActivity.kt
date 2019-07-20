@@ -2,6 +2,7 @@ package com.mahesaiqbal.academy.ui.reader
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
@@ -23,6 +24,7 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         if (bundle != null) {
             var courseId = bundle.getString("extra_course_id")
             if (courseId != null) {
+                Log.d("courseIdReader", courseId)
                 courseReaderViewModel.setCourseIdValue(courseId)
                 populateFragment()
             }

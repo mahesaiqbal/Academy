@@ -8,9 +8,15 @@ import com.mahesaiqbal.academy.utils.DataDummy
 class DetailCourseViewModel : ViewModel() {
 
     lateinit var mCourse: CourseEntity
-    var courseId: String? = null
-        get() = field
-        set(value) { field = value }
+    lateinit var courseId: String
+
+    fun setCourseIdValue(id: String) {
+        courseId = id
+    }
+
+    fun getCourseIdValue(): String {
+        return courseId
+    }
 
     fun getCourse(): CourseEntity {
         for (i in 0 until DataDummy.generateDummyCourses().size) {
@@ -22,5 +28,5 @@ class DetailCourseViewModel : ViewModel() {
         return mCourse
     }
 
-    fun getModules(): List<ModuleEntity> = DataDummy.generateDummyModules(courseId!!)
+    fun getModules(): List<ModuleEntity> = DataDummy.generateDummyModules(courseId)
 }
