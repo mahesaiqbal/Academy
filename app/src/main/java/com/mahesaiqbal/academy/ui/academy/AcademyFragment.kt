@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.CourseEntity
@@ -15,6 +16,9 @@ import kotlinx.android.synthetic.main.fragment_academy.*
 class AcademyFragment : Fragment(), AcademyFragmentCallback {
 
     lateinit var academyAdapter: AcademyAdapter
+    lateinit var academyViewModel: AcademyViewModel
+
+    lateinit var courses: List<CourseEntity>
 
     companion object {
         fun newInstance(): Fragment {
@@ -37,7 +41,10 @@ class AcademyFragment : Fragment(), AcademyFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            academyAdapter = AcademyAdapter(activity!!, DataDummy.generateDummyCourses(), this)
+            academyViewModel = ViewModelProviders.of(this).get(AcademyViewModel::class.java)
+            courses = academyViewModel.getCourses()
+
+            academyAdapter = AcademyAdapter(activity!!, courses as ArrayList<CourseEntity>, this)
 
             rv_academy.apply {
                 layoutManager = LinearLayoutManager(context)

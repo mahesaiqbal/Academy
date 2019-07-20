@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.CourseEntity
@@ -16,6 +17,9 @@ import kotlinx.android.synthetic.main.fragment_bookmark.*
 class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
 
     lateinit var bookmarkAdapter: BookmarkAdapter
+    lateinit var bookmarkViewModel: BookmarkViewModel
+
+    lateinit var courses: List<CourseEntity>
 
     companion object {
         fun newInstance(): Fragment {
@@ -38,7 +42,10 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            bookmarkAdapter = BookmarkAdapter(activity!!, DataDummy.generateDummyCourses(), this)
+            bookmarkViewModel = ViewModelProviders.of(this).get(BookmarkViewModel::class.java)
+            courses = bookmarkViewModel.getBookmarks()
+
+            bookmarkAdapter = BookmarkAdapter(activity!!, courses as ArrayList<CourseEntity>, this)
 
             rv_bookmark.apply {
                 layoutManager = LinearLayoutManager(context)

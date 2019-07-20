@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
@@ -13,12 +14,15 @@ import com.mahesaiqbal.academy.ui.reader.CourseReaderCallback
 import com.mahesaiqbal.academy.ui.reader.list.ModuleListAdapter.ModuleClickListener
 import com.mahesaiqbal.academy.utils.DataDummy
 import com.mahesaiqbal.academy.ui.reader.CourseReaderActivity
+import com.mahesaiqbal.academy.ui.reader.CourseReaderViewModel
 import kotlinx.android.synthetic.main.fragment_module_list.*
 
 class ModuleListFragment : Fragment(), ModuleClickListener {
 
     lateinit var moduleListAdapter: ModuleListAdapter
     lateinit var courseReaderCallback: CourseReaderCallback
+
+    lateinit var courseReaderViewModel: CourseReaderViewModel
 
     companion object {
         fun newInstance(): Fragment {
@@ -37,7 +41,9 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            moduleListAdapter = ModuleListAdapter(DataDummy.generateDummyModules("a14"), this)
+            courseReaderViewModel = ViewModelProviders.of(activity!!).get(CourseReaderViewModel::class.java)
+
+            moduleListAdapter = ModuleListAdapter(courseReaderViewModel.getModules(), this)
             populateRecyclerView()
         }
     }
@@ -49,6 +55,7 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
 
     override fun onItemClick(position: Int, moduleId: String?) {
         courseReaderCallback.moveTo(position, moduleId!!)
+        courseReaderViewModel.setSelectedModule(moduleId)
     }
 
     private fun populateRecyclerView() {

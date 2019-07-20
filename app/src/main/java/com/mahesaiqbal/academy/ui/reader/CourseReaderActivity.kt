@@ -4,20 +4,26 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProviders
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.ui.reader.content.ModuleContentFragment
 import com.mahesaiqbal.academy.ui.reader.list.ModuleListFragment
 
 class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
 
+    lateinit var courseReaderViewModel: CourseReaderViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_reader)
+
+        courseReaderViewModel = ViewModelProviders.of(this).get(CourseReaderViewModel::class.java)
 
         val bundle: Bundle? = intent.extras
         if (bundle != null) {
             var courseId = bundle.getString("extra_course_id")
             if (courseId != null) {
+                courseReaderViewModel.setCourseIdValue(courseId)
                 populateFragment()
             }
         }
