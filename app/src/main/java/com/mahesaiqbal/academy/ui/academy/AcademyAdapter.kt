@@ -5,13 +5,12 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 
 import com.mahesaiqbal.academy.ui.academy.AcademyAdapter.AcademyViewHolder
 import com.mahesaiqbal.academy.ui.detail.DetailCourseActivity

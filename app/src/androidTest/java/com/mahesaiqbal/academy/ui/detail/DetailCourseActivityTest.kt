@@ -3,15 +3,13 @@ package com.mahesaiqbal.academy.ui.detail
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.mahesaiqbal.academy.academies.utils.FakeDataDummy
-import com.mahesaiqbal.academy.data.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import org.junit.After
 import org.junit.Before
 
-import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.runner.RunWith
 import android.content.Intent
-import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*

@@ -1,6 +1,6 @@
 package com.mahesaiqbal.academy.ui.academy
 
-import com.mahesaiqbal.academy.data.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before

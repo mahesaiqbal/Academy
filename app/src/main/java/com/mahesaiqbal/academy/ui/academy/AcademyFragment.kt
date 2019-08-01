@@ -5,12 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.CourseEntity
-import com.mahesaiqbal.academy.utils.DataDummy
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.ui.academy.AcademyAdapter.AcademyFragmentCallback
+import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_academy.*
 
 class AcademyFragment : Fragment(), AcademyFragmentCallback {
@@ -23,6 +24,11 @@ class AcademyFragment : Fragment(), AcademyFragmentCallback {
     companion object {
         fun newInstance(): Fragment {
             return AcademyFragment()
+        }
+
+        fun obtainViewModel(activity: FragmentActivity): AcademyViewModel {
+            val factory = ViewModelFactory.getInstance(activity.application)
+            return ViewModelProviders.of(activity, factory).get(AcademyViewModel::class.java)
         }
     }
 
@@ -41,7 +47,7 @@ class AcademyFragment : Fragment(), AcademyFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            academyViewModel = ViewModelProviders.of(this).get(AcademyViewModel::class.java)
+            academyViewModel = obtainViewModel(activity!!)
             courses = academyViewModel.getCourses()
 
             academyAdapter = AcademyAdapter(activity!!, courses as ArrayList<CourseEntity>, this)

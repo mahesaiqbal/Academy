@@ -1,12 +1,12 @@
 package com.mahesaiqbal.academy.ui.detail
 
-import com.mahesaiqbal.academy.data.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import org.junit.After
 import org.junit.Before
 
 import org.junit.Assert.*
 import org.junit.Test
-import com.mahesaiqbal.academy.data.ModuleEntity
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 
 
 class DetailCourseViewModelTest {

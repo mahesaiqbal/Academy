@@ -1,4 +1,4 @@
-package com.mahesaiqbal.academy.data
+package com.mahesaiqbal.academy.data.source.local.entity
 
 data class CourseEntity(
     val courseId: String,

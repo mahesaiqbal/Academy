@@ -1,6 +1,6 @@
 package com.mahesaiqbal.academy.ui.bookmark
 
-import com.mahesaiqbal.academy.data.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import org.junit.After
 import org.junit.Before
 
@@ -13,7 +13,7 @@ class BookmarkViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = BookmarkViewModel()
+        viewModel = BookmarkViewModel(mAcademyRepository)
     }
 
     @After

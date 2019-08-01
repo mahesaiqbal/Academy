@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.ModuleEntity
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.list.ModuleListAdapter.ModuleListViewHolder
 import kotlinx.android.synthetic.main.items_module_list_custom.view.*
 

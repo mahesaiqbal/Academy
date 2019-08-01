@@ -1,7 +1,7 @@
 package com.mahesaiqbal.academy.utils
 
-import com.mahesaiqbal.academy.data.CourseEntity
-import com.mahesaiqbal.academy.data.ModuleEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 
 
 class DataDummy {

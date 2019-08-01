@@ -5,10 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.ModuleEntity
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderViewModel
+import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_module_content.*
 
 class ModuleContentFragment : Fragment() {
@@ -18,6 +20,11 @@ class ModuleContentFragment : Fragment() {
     companion object {
         fun newInstance(): Fragment {
             return ModuleContentFragment()
+        }
+
+        fun obtainViewModel(activity: FragmentActivity): CourseReaderViewModel {
+            val factory = ViewModelFactory.getInstance(activity.application)
+            return ViewModelProviders.of(activity, factory).get(CourseReaderViewModel::class.java)
         }
     }
 
@@ -32,8 +39,8 @@ class ModuleContentFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            courseReaderViewModel = ViewModelProviders.of(activity!!).get(CourseReaderViewModel::class.java)
-            var module: ModuleEntity? = courseReaderViewModel.getSelectedModule()
+            courseReaderViewModel = obtainViewModel(activity!!)
+            val module: ModuleEntity? = courseReaderViewModel.getSelectedModule()
             populateWebView(module)
         }
     }

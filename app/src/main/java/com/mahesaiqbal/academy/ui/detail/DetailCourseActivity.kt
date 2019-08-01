@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.CourseEntity
-import com.mahesaiqbal.academy.data.ModuleEntity
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderActivity
-import com.mahesaiqbal.academy.utils.DataDummy
+import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 
 import kotlinx.android.synthetic.main.activity_detail_course.*
 import kotlinx.android.synthetic.main.content_detail_course.*
@@ -25,6 +25,13 @@ class DetailCourseActivity : AppCompatActivity() {
 
     lateinit var modules: List<ModuleEntity>
 
+    companion object {
+        fun obtainViewModel(activity: AppCompatActivity): DetailCourseViewModel {
+            val factory = ViewModelFactory.getInstance(activity.application)
+            return ViewModelProviders.of(activity, factory).get(DetailCourseViewModel::class.java)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_course)
@@ -32,7 +39,7 @@ class DetailCourseActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        detailCourseViewModel = ViewModelProviders.of(this).get(DetailCourseViewModel::class.java)
+        detailCourseViewModel = obtainViewModel(this)
 
         val extras: Bundle? = intent.extras
         if (extras != null) {

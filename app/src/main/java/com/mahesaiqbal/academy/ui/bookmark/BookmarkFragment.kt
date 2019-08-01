@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
-import com.mahesaiqbal.academy.data.CourseEntity
-import com.mahesaiqbal.academy.utils.DataDummy
+import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.ui.bookmark.BookmarkAdapter.BookmarkFragmentCallback
+import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_bookmark.*
 
 class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
@@ -24,6 +25,11 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     companion object {
         fun newInstance(): Fragment {
             return BookmarkFragment()
+        }
+
+        fun obtainViewModel(activity: FragmentActivity): BookmarkViewModel {
+            val factory = ViewModelFactory.getInstance(activity.application)
+            return ViewModelProviders.of(activity, factory).get(BookmarkViewModel::class.java)
         }
     }
 
@@ -42,7 +48,7 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            bookmarkViewModel = ViewModelProviders.of(this).get(BookmarkViewModel::class.java)
+            bookmarkViewModel = obtainViewModel(activity!!)
             courses = bookmarkViewModel.getBookmarks()
 
             bookmarkAdapter = BookmarkAdapter(activity!!, courses as ArrayList<CourseEntity>, this)

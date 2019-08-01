@@ -4,21 +4,30 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.ui.reader.content.ModuleContentFragment
 import com.mahesaiqbal.academy.ui.reader.list.ModuleListFragment
+import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 
 class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
 
     lateinit var courseReaderViewModel: CourseReaderViewModel
 
+    companion object {
+        fun obtainViewModel(activity: FragmentActivity): CourseReaderViewModel {
+            val factory = ViewModelFactory.getInstance(activity.application)
+            return ViewModelProviders.of(activity, factory).get(CourseReaderViewModel::class.java)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_reader)
 
-        courseReaderViewModel = ViewModelProviders.of(this).get(CourseReaderViewModel::class.java)
+        courseReaderViewModel = obtainViewModel(this)
 
         val bundle: Bundle? = intent.extras
         if (bundle != null) {
