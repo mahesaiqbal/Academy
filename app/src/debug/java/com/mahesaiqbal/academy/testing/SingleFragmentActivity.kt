@@ -1,11 +1,11 @@
 package com.mahesaiqbal.academy.testing
 
-import android.os.Bundle;
-import android.view.Gravity;
-import android.widget.FrameLayout;
+import android.os.Bundle
+import android.view.Gravity
+import android.widget.FrameLayout
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
 import com.mahesaiqbal.academy.R
 

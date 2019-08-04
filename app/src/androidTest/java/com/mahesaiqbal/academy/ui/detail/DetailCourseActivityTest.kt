@@ -22,14 +22,14 @@ import org.junit.Test
 @RunWith(AndroidJUnit4::class)
 class DetailCourseActivityTest {
 
-    val dummyCourse: CourseEntity = FakeDataDummy.generateDummyCourses().get(0);
+    val dummyCourse: CourseEntity = FakeDataDummy.generateDummyCourses().get(0)
 
     @Rule
     @JvmField
     var activityRule: ActivityTestRule<DetailCourseActivity> =
         object : ActivityTestRule<DetailCourseActivity>(DetailCourseActivity::class.java) {
             override fun getActivityIntent(): Intent {
-                val targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext()
+                val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
                 val result = Intent(targetContext, DetailCourseActivity::class.java)
                 result.putExtra("extra_course", dummyCourse.courseId)
                 return result

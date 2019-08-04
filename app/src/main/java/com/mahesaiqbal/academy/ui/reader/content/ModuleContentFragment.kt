@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
@@ -39,8 +40,17 @@ class ModuleContentFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
+            progress_bar.visibility = View.VISIBLE
+
             courseReaderViewModel = obtainViewModel(activity!!)
-            val module: ModuleEntity? = courseReaderViewModel.getSelectedModule()
+
+            courseReaderViewModel.getSelectedModule().observe(this, selectedModule)
+        }
+    }
+
+    private val selectedModule = Observer<ModuleEntity> { module ->
+        if (module != null) {
+            progress_bar.visibility = View.GONE
             populateWebView(module)
         }
     }

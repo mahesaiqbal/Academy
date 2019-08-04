@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
@@ -20,7 +21,7 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     lateinit var bookmarkAdapter: BookmarkAdapter
     lateinit var bookmarkViewModel: BookmarkViewModel
 
-    lateinit var courses: List<CourseEntity>
+    var courses: List<CourseEntity> = arrayListOf()
 
     companion object {
         fun newInstance(): Fragment {
@@ -41,23 +42,31 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
         return inflater.inflate(R.layout.fragment_bookmark, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
+            progress_bar.visibility = View.VISIBLE
+
             bookmarkViewModel = obtainViewModel(activity!!)
-            courses = bookmarkViewModel.getBookmarks()
 
             bookmarkAdapter = BookmarkAdapter(activity!!, courses as ArrayList<CourseEntity>, this)
+
+            bookmarkViewModel.getBookmarks().observe(this, getBookmark)
+        }
+    }
+
+    private val getBookmark = Observer<List<CourseEntity>> { course ->
+        if (course != null) {
+            progress_bar.visibility = View.GONE
+            bookmarkAdapter = BookmarkAdapter(activity!!, course as ArrayList<CourseEntity>, this)
 
             rv_bookmark.apply {
                 layoutManager = LinearLayoutManager(context)
                 setHasFixedSize(true)
                 adapter = bookmarkAdapter
             }
+
+            bookmarkAdapter.notifyDataSetChanged()
         }
     }
 

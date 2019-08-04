@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
+import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderCallback
 import com.mahesaiqbal.academy.ui.reader.list.ModuleListAdapter.ModuleClickListener
-import com.mahesaiqbal.academy.utils.DataDummy
 import com.mahesaiqbal.academy.ui.reader.CourseReaderActivity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderViewModel
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
@@ -48,10 +49,19 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
+            progress_bar.visibility = View.VISIBLE
+
             courseReaderViewModel = obtainViewModel(activity!!)
 
-            moduleListAdapter = ModuleListAdapter(courseReaderViewModel.getModules(), this)
-            populateRecyclerView()
+            courseReaderViewModel.getModules().observe(this, getModule)
+        }
+    }
+
+    private val getModule = Observer<List<ModuleEntity>> { modules ->
+        if (modules != null) {
+            progress_bar.visibility = View.GONE
+            moduleListAdapter = ModuleListAdapter(modules as ArrayList<ModuleEntity>, this)
+            populateRecyclerView(modules)
         }
     }
 
@@ -65,7 +75,7 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
         courseReaderViewModel.setSelectedModule(moduleId)
     }
 
-    private fun populateRecyclerView() {
+    private fun populateRecyclerView(modules: List<ModuleEntity>) {
         progress_bar.visibility = View.GONE
 
         rv_module.apply {

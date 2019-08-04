@@ -40,7 +40,7 @@ class BookmarkAdapter(var activity: Activity, var mCourses: ArrayList<CourseEnti
             Glide.with(activity)
                 .load(courseEntity.imagePath)
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
-                .into(itemView.img_poster);
+                .into(itemView.img_poster)
         }
 
         fun detailCourse(courseEntity: CourseEntity) {

@@ -1,5 +1,5 @@
 package com.mahesaiqbal.academy.ui.reader
 
-public interface CourseReaderCallback {
+interface CourseReaderCallback {
     fun moveTo(position: Int, moduleId: String)
 }

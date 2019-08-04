@@ -3,7 +3,9 @@ package com.mahesaiqbal.academy.ui.detail
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,24 +47,39 @@ class DetailCourseActivity : AppCompatActivity() {
         if (extras != null) {
             val courseId = extras.getString("extra_course")
             if (courseId != null) {
+                progress_bar.visibility = View.VISIBLE
                 detailCourseViewModel.setCourseIdValue(courseId)
-                Log.d("courseIdDetail", courseId)
-                modules = detailCourseViewModel.getModules()
-                detailCourseAdapter = DetailCourseAdapter(modules as ArrayList<ModuleEntity>)
+//                modules = detailCourseViewModel.getModules()
+//                detailCourseAdapter = DetailCourseAdapter(modules as ArrayList<ModuleEntity>)
             }
         }
 
-        if (detailCourseViewModel.getCourse() != null) {
-            populateCourse(detailCourseViewModel.getCourse())
-        }
+        detailCourseViewModel.getModules().observe(this, getModule)
 
-        rv_module.apply {
-            val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
-            addItemDecoration(dividerItemDecoration)
-            isNestedScrollingEnabled = false
-            layoutManager = LinearLayoutManager(this@DetailCourseActivity)
-            setHasFixedSize(true)
-            adapter = detailCourseAdapter
+        detailCourseViewModel.getCourse().observe(this, course)
+    }
+
+    private val getModule = Observer<List<ModuleEntity>> { module ->
+        if (module != null) {
+            progress_bar.visibility = View.GONE
+            detailCourseAdapter = DetailCourseAdapter(module as ArrayList<ModuleEntity>)
+
+            rv_module.apply {
+                val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
+                addItemDecoration(dividerItemDecoration)
+                isNestedScrollingEnabled = false
+                layoutManager = LinearLayoutManager(this@DetailCourseActivity)
+                setHasFixedSize(true)
+                adapter = detailCourseAdapter
+            }
+
+            detailCourseAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private val course = Observer<CourseEntity> { courseEntity ->
+        if (courseEntity != null) {
+            populateCourse(courseEntity)
         }
     }
 

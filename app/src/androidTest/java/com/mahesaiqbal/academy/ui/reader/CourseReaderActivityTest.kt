@@ -32,7 +32,7 @@ class CourseReaderActivityTest {
     var activityRule: ActivityTestRule<CourseReaderActivity> =
         object : ActivityTestRule<CourseReaderActivity>(CourseReaderActivity::class.java) {
             override fun getActivityIntent(): Intent {
-                val targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext()
+                val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
                 val result = Intent(targetContext, CourseReaderActivity::class.java)
                 result.putExtra("extra_course_id", dummyCourse.courseId)
                 return result
@@ -55,9 +55,9 @@ class CourseReaderActivityTest {
 
     @Test
     fun clickModule() {
-        onView(withId(R.id.rv_module)).check(matches(isDisplayed()));
-        onView(withId(R.id.rv_module)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()));
+        onView(withId(R.id.rv_module)).check(matches(isDisplayed()))
+        onView(withId(R.id.rv_module)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
 
-        onView(withId(R.id.web_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.web_view)).check(matches(isDisplayed()))
     }
 }

@@ -1,5 +1,6 @@
 package com.mahesaiqbal.academy.ui.reader
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.mahesaiqbal.academy.data.source.AcademyRepository
 import com.mahesaiqbal.academy.data.source.local.entity.ContentEntity
@@ -19,7 +20,7 @@ class CourseReaderViewModel(var academyRepository: AcademyRepository) : ViewMode
         moduleId = id
     }
 
-    fun getSelectedModule(): ModuleEntity? = academyRepository.getContent(courseId, moduleId)
+    fun getSelectedModule(): LiveData<ModuleEntity> = academyRepository.getContent(courseId, moduleId)
 
-    fun getModules(): ArrayList<ModuleEntity> = academyRepository.getAllModulesByCourse(courseId)
+    fun getModules(): LiveData<List<ModuleEntity>> = academyRepository.getAllModulesByCourse(courseId)
 }

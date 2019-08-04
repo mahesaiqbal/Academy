@@ -57,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
         super.onBackPressed()
         val main = Intent(Intent.ACTION_MAIN)
         main.addCategory(Intent.CATEGORY_LAUNCHER)
-        main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        main.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(main)
     }
 }

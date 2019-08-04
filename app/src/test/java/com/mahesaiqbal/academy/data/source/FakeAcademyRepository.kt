@@ -105,7 +105,7 @@ class FakeAcademyRepository(var localRepository: LocalRepository, var remoteRepo
             if (id == moduleId) {
                 module = ModuleEntity(id, courseId1, title, position, false)
 
-                module.contentEntity = ContentEntity(remoteRepository.getContent(moduleId)!!.content)
+                module.contentEntity = ContentEntity(remoteRepository.getContent(moduleId).content)
                 break
             }
         }
