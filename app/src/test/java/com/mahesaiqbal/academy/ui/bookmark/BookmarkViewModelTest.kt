@@ -1,5 +1,8 @@
 package com.mahesaiqbal.academy.ui.bookmark
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.mahesaiqbal.academy.data.source.AcademyRepository
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.utils.FakeDataDummy
@@ -7,10 +10,15 @@ import org.junit.After
 import org.junit.Before
 
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
 
 class BookmarkViewModelTest {
+
+    @Rule
+    @JvmField
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     var viewModel: BookmarkViewModel? = null
     var academyRepository: AcademyRepository = mock(AcademyRepository::class.java)
@@ -26,10 +34,15 @@ class BookmarkViewModelTest {
 
     @Test
     fun getBookmark() {
-        `when`(academyRepository.getBookmarkedCourses()).thenReturn(FakeDataDummy.generateDummyCourses())
-        val courseEntities: List<CourseEntity> = viewModel!!.getBookmarks()
+        val dummyCourse: MutableLiveData<List<CourseEntity>> = MutableLiveData()
+        dummyCourse.value = FakeDataDummy.generateDummyCourses()
+
+        `when`(academyRepository.getAllCourses()).thenReturn(dummyCourse)
+
+        val observer: Observer<List<CourseEntity>> = mock(Observer::class.java) as Observer<List<CourseEntity>>
+
+        viewModel?.getBookmarks()?.observeForever(observer)
+
         verify(academyRepository).getBookmarkedCourses()
-        assertNotNull(courseEntities)
-        assertEquals(5, courseEntities.size)
     }
 }

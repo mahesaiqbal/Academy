@@ -11,8 +11,7 @@ import com.mahesaiqbal.academy.data.source.remote.response.ContentResponse
 import com.mahesaiqbal.academy.data.source.remote.response.CourseResponse
 import com.mahesaiqbal.academy.data.source.remote.response.ModuleResponse
 
-class AcademyRepository(var localRepository: LocalRepository, var remoteRepository: RemoteRepository) :
-    AcademyDataSource {
+class AcademyRepository(var localRepository: LocalRepository, var remoteRepository: RemoteRepository) : AcademyDataSource {
 
     companion object {
         @Volatile
