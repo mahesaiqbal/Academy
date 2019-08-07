@@ -3,7 +3,7 @@ package com.mahesaiqbal.academy.di
 import android.app.Application
 import com.mahesaiqbal.academy.data.source.AcademyRepository
 import com.mahesaiqbal.academy.data.source.local.LocalRepository
-import com.mahesaiqbal.academy.data.source.remote.JsonHelper
+import com.mahesaiqbal.academy.utils.JsonHelper
 import com.mahesaiqbal.academy.data.source.remote.RemoteRepository
 
 class Injection {

@@ -3,6 +3,7 @@ package com.mahesaiqbal.academy.ui.reader
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -14,6 +15,7 @@ import androidx.test.rule.ActivityTestRule
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.academies.utils.FakeDataDummy
 import com.mahesaiqbal.academy.academies.utils.RecyclerViewItemCountAssertion
+import com.mahesaiqbal.academy.utils.EspressoIdlingResource
 import org.junit.After
 import org.junit.Before
 
@@ -41,32 +43,22 @@ class CourseReaderActivityTest {
 
     @Before
     fun setUp() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource())
     }
 
     @After
     fun tearDown() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource())
     }
 
     @Test
     fun loadModules() {
-        try {
-            Thread.sleep(3000)
-        } catch(e: InterruptedException) {
-            e.printStackTrace()
-        }
-
         onView(withId(R.id.rv_module)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_module)).check(RecyclerViewItemCountAssertion(7))
     }
 
     @Test
     fun clickModule() {
-        try {
-            Thread.sleep(3000)
-        } catch(e: InterruptedException) {
-            e.printStackTrace()
-        }
-
         onView(withId(R.id.rv_module)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_module)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
 

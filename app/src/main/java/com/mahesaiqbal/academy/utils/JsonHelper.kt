@@ -1,4 +1,4 @@
-package com.mahesaiqbal.academy.data.source.remote
+package com.mahesaiqbal.academy.utils
 
 import android.app.Application
 import java.io.IOException

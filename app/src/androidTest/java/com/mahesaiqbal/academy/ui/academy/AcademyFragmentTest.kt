@@ -12,10 +12,12 @@ import org.junit.Rule
 import org.junit.Test
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mahesaiqbal.academy.utils.EspressoIdlingResource
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -28,21 +30,17 @@ class AcademyFragmentTest {
 
     @Before
     fun setUp() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource())
         activityRule.activity.setFragment(academyFragment)
     }
 
     @After
     fun tearDown() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource())
     }
 
     @Test
     fun loadCourses() {
-        try {
-            Thread.sleep(3000)
-        } catch(e: InterruptedException) {
-            e.printStackTrace()
-        }
-
         onView(withId(R.id.rv_academy)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_academy)).check(RecyclerViewItemCountAssertion(5))
     }

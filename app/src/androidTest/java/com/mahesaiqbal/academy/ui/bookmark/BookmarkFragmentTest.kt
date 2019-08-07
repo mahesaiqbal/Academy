@@ -1,6 +1,7 @@
 package com.mahesaiqbal.academy.ui.bookmark
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -9,6 +10,7 @@ import androidx.test.rule.ActivityTestRule
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.academies.utils.RecyclerViewItemCountAssertion
 import com.mahesaiqbal.academy.testing.SingleFragmentActivity
+import com.mahesaiqbal.academy.utils.EspressoIdlingResource
 import org.junit.After
 import org.junit.Before
 
@@ -27,21 +29,17 @@ class BookmarkFragmentTest {
 
     @Before
     fun setUp() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource())
         activityRule.activity.setFragment(bookmarkFragment)
     }
 
     @After
     fun tearDown() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource())
     }
 
     @Test
     fun loadBookmarks() {
-        try {
-            Thread.sleep(3000)
-        } catch(e: InterruptedException) {
-            e.printStackTrace()
-        }
-
         onView(withId(R.id.rv_bookmark)).check(matches(isDisplayed()))
         onView(withId(R.id.rv_bookmark)).check(RecyclerViewItemCountAssertion(5))
     }
