@@ -1,3 +1,8 @@
 package com.mahesaiqbal.academy.data.source.local.entity
 
-data class ContentEntity(val content: String)
+import androidx.room.ColumnInfo
+
+data class ContentEntity(
+    @ColumnInfo(name = "content")
+    val content: String
+)

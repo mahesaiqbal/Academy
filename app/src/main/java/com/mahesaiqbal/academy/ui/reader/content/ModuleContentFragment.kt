@@ -13,6 +13,10 @@ import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderViewModel
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_module_content.*
+import android.widget.Toast
+import com.mahesaiqbal.academy.data.source.local.entity.ContentEntity
+import com.mahesaiqbal.academy.vo.Resource
+import com.mahesaiqbal.academy.vo.Status.*
 
 class ModuleContentFragment : Fragment() {
 
@@ -44,18 +48,54 @@ class ModuleContentFragment : Fragment() {
 
             courseReaderViewModel = obtainViewModel(activity!!)
 
-            courseReaderViewModel.getSelectedModule().observe(this, selectedModule)
+            courseReaderViewModel.selectedModule.observe(this, selectedModule)
         }
     }
 
-    private val selectedModule = Observer<ModuleEntity> { module ->
-        if (module != null) {
-            progress_bar.visibility = View.GONE
-            populateWebView(module)
+    private val selectedModule = Observer<Resource<ModuleEntity>> { moduleEntity ->
+        if (moduleEntity != null) {
+            when (moduleEntity.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> if (moduleEntity.data != null) {
+                    setButtonNextPrevState(moduleEntity.data)
+                    progress_bar.visibility = View.GONE
+
+                    if (!moduleEntity.data.read) {
+                        courseReaderViewModel.readContent(moduleEntity.data)
+                    }
+
+                    if (moduleEntity.data.contentEntity != null) {
+                        populateWebView(moduleEntity.data.contentEntity)
+                    }
+                }
+                ERROR -> {
+                    progress_bar.visibility = View.GONE
+                    Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            btn_next.setOnClickListener { courseReaderViewModel.setNextPage() }
+
+            btn_prev.setOnClickListener { courseReaderViewModel.setPrevPage() }
         }
     }
 
-    private fun populateWebView(moduleEntity: ModuleEntity?) {
-        web_view.loadData(moduleEntity?.contentEntity!!.content, "text/html", "UTF-8")
+    private fun populateWebView(content: ContentEntity?) {
+        web_view.loadData(content!!.content, "text/html", "UTF-8")
+    }
+
+    private fun setButtonNextPrevState(module: ModuleEntity) {
+        if (activity != null) {
+            if (module.position == 0) {
+                btn_prev.setEnabled(false)
+                btn_next.setEnabled(true)
+            } else if (module.position == courseReaderViewModel.getModuleSize() - 1) {
+                btn_prev.setEnabled(true)
+                btn_next.setEnabled(false)
+            } else {
+                btn_prev.setEnabled(true)
+                btn_next.setEnabled(true)
+            }
+        }
     }
 }

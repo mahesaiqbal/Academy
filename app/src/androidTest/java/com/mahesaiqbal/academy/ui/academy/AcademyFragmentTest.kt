@@ -36,7 +36,7 @@ class AcademyFragmentTest {
 
     @After
     fun tearDown() {
-        IdlingRegistry.getInstance().register(EspressoIdlingResource.getEspressoIdlingResource())
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.getEspressoIdlingResource())
     }
 
     @Test

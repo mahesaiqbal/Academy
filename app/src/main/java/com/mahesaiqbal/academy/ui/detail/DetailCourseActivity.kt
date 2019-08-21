@@ -2,8 +2,10 @@ package com.mahesaiqbal.academy.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,9 +18,13 @@ import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderActivity
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
+import com.mahesaiqbal.academy.vo.Resource
+import com.mahesaiqbal.academy.vo.Status.*
 
 import kotlinx.android.synthetic.main.activity_detail_course.*
 import kotlinx.android.synthetic.main.content_detail_course.*
+import com.mahesaiqbal.academy.data.source.local.entity.CourseWithModule
+import androidx.core.content.ContextCompat
 
 class DetailCourseActivity : AppCompatActivity() {
 
@@ -26,6 +32,8 @@ class DetailCourseActivity : AppCompatActivity() {
     lateinit var detailCourseViewModel: DetailCourseViewModel
 
     lateinit var modules: List<ModuleEntity>
+
+    lateinit var menuDetail: Menu
 
     companion object {
         fun obtainViewModel(activity: AppCompatActivity): DetailCourseViewModel {
@@ -49,37 +57,53 @@ class DetailCourseActivity : AppCompatActivity() {
             if (courseId != null) {
                 progress_bar.visibility = View.VISIBLE
                 detailCourseViewModel.setCourseIdValue(courseId)
-//                modules = detailCourseViewModel.getModules()
-//                detailCourseAdapter = DetailCourseAdapter(modules as ArrayList<ModuleEntity>)
             }
         }
 
-        detailCourseViewModel.getModules().observe(this, getModule)
-
-        detailCourseViewModel.getCourse().observe(this, course)
+        detailCourseViewModel.courseModule.observe(this, courseWithModuleResource)
     }
 
-    private val getModule = Observer<List<ModuleEntity>> { module ->
-        if (module != null) {
-            progress_bar.visibility = View.GONE
-            detailCourseAdapter = DetailCourseAdapter(module as ArrayList<ModuleEntity>)
+    private val courseWithModuleResource = Observer<Resource<CourseWithModule>> { courseWithModuleResource ->
+        if (courseWithModuleResource != null) {
 
-            rv_module.apply {
-                val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
-                addItemDecoration(dividerItemDecoration)
-                isNestedScrollingEnabled = false
-                layoutManager = LinearLayoutManager(this@DetailCourseActivity)
-                setHasFixedSize(true)
-                adapter = detailCourseAdapter
+            when (courseWithModuleResource.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> if (courseWithModuleResource.data != null) {
+                    progress_bar.visibility = View.GONE
+
+                    detailCourseAdapter = DetailCourseAdapter(courseWithModuleResource.data.modules as ArrayList<ModuleEntity>)
+
+                    rv_module.apply {
+                        val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
+                        addItemDecoration(dividerItemDecoration)
+                        layoutManager = LinearLayoutManager(context)
+                        setHasFixedSize(true)
+                        adapter = detailCourseAdapter
+                    }
+
+                    populateCourse(courseWithModuleResource.data.course!!)
+                }
+                ERROR -> progress_bar.visibility = View.GONE
             }
-
-            detailCourseAdapter.notifyDataSetChanged()
         }
     }
 
-    private val course = Observer<CourseEntity> { courseEntity ->
-        if (courseEntity != null) {
-            populateCourse(courseEntity)
+    private val courseWithModule = Observer<Resource<CourseWithModule>> { courseWithModule ->
+        if (courseWithModule != null) {
+
+            when (courseWithModule.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> if (courseWithModule.data != null) {
+                    progress_bar.visibility = View.GONE
+
+                    val state = courseWithModule.data.course!!.bookmarked
+                    setBookmarkState(state)
+                }
+                ERROR -> {
+                    progress_bar.visibility = View.GONE
+                    Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
@@ -93,7 +117,7 @@ class DetailCourseActivity : AppCompatActivity() {
             .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
             .into(image_poster)
 
-        btn_start.setOnClickListener { v -> goToCourseReader() }
+        btn_start.setOnClickListener { goToCourseReader() }
     }
 
     fun goToCourseReader() {
@@ -102,4 +126,29 @@ class DetailCourseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_detail, menu)
+        menuDetail = menu!!
+
+        detailCourseViewModel.courseModule.observe(this, courseWithModule)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.action_bookmark) {
+            detailCourseViewModel.setBookmark()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setBookmarkState(state: Boolean) {
+        val menuItem = menuDetail.findItem(R.id.action_bookmark)
+        if (state) {
+            menuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_bookmarked_white))
+        } else {
+            menuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_bookmark_white))
+        }
+    }
 }

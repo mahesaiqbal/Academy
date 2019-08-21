@@ -18,7 +18,10 @@ import com.mahesaiqbal.academy.ui.reader.list.ModuleListAdapter.ModuleClickListe
 import com.mahesaiqbal.academy.ui.reader.CourseReaderActivity
 import com.mahesaiqbal.academy.ui.reader.CourseReaderViewModel
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
+import com.mahesaiqbal.academy.vo.Resource
+import com.mahesaiqbal.academy.vo.Status.*
 import kotlinx.android.synthetic.main.fragment_module_list.*
+import android.widget.Toast
 
 class ModuleListFragment : Fragment(), ModuleClickListener {
 
@@ -26,6 +29,8 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
     lateinit var courseReaderCallback: CourseReaderCallback
 
     lateinit var courseReaderViewModel: CourseReaderViewModel
+
+    var modules: List<ModuleEntity> = arrayListOf()
 
     companion object {
         fun newInstance(): Fragment {
@@ -53,15 +58,25 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
 
             courseReaderViewModel = obtainViewModel(activity!!)
 
-            courseReaderViewModel.getModules().observe(this, getModule)
+            moduleListAdapter = ModuleListAdapter(modules as ArrayList<ModuleEntity>, this)
+
+            courseReaderViewModel.modules.observe(this, getModule)
         }
     }
 
-    private val getModule = Observer<List<ModuleEntity>> { modules ->
-        if (modules != null) {
-            progress_bar.visibility = View.GONE
-            moduleListAdapter = ModuleListAdapter(modules as ArrayList<ModuleEntity>, this)
-            populateRecyclerView(modules)
+    private val getModule = Observer<Resource<List<ModuleEntity>>> { moduleEntities ->
+        if (moduleEntities != null) {
+            when (moduleEntities.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> {
+                    progress_bar.visibility = View.GONE
+                    populateRecyclerView(moduleEntities.data!!)
+                }
+                ERROR -> {
+                    progress_bar.visibility = View.GONE
+                    Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -76,7 +91,8 @@ class ModuleListFragment : Fragment(), ModuleClickListener {
     }
 
     private fun populateRecyclerView(modules: List<ModuleEntity>) {
-        progress_bar.visibility = View.GONE
+
+        moduleListAdapter = ModuleListAdapter(modules as ArrayList<ModuleEntity>, this)
 
         rv_module.apply {
             val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)

@@ -1,21 +1,24 @@
 package com.mahesaiqbal.academy.ui.academy
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
-import com.mahesaiqbal.academy.ui.academy.AcademyAdapter.AcademyFragmentCallback
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
+import com.mahesaiqbal.academy.vo.Resource
+import com.mahesaiqbal.academy.vo.Status.*
 import kotlinx.android.synthetic.main.fragment_academy.*
 
-class AcademyFragment : Fragment(), AcademyFragmentCallback {
+class AcademyFragment : Fragment() {
 
     lateinit var academyAdapter: AcademyAdapter
     lateinit var academyViewModel: AcademyViewModel
@@ -48,28 +51,33 @@ class AcademyFragment : Fragment(), AcademyFragmentCallback {
 
             academyViewModel = obtainViewModel(activity!!)
 
-            academyAdapter = AcademyAdapter(activity!!, courses as ArrayList<CourseEntity>, this)
+            academyAdapter = AcademyAdapter(activity!!, courses as ArrayList<CourseEntity>)
 
-            academyViewModel.getCourses().observe(this, getCourse)
+            academyViewModel.setUsername("Dicoding")
+            academyViewModel.courses.observe(this, getCourse)
         }
     }
 
-    private val getCourse = Observer<List<CourseEntity>> { course ->
-        if (course != null) {
-            progress_bar.visibility = View.GONE
-            academyAdapter = AcademyAdapter(activity!!, course as ArrayList<CourseEntity>, this)
+    private val getCourse = Observer<Resource<List<CourseEntity>>> { courses ->
+        if (courses != null) {
+            when (courses.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> {
+                    progress_bar.visibility = View.GONE
 
-            rv_academy.apply {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(true)
-                adapter = academyAdapter
+                    academyAdapter = AcademyAdapter(activity!!, courses.data as ArrayList<CourseEntity>)
+
+                    rv_academy.apply {
+                        layoutManager = LinearLayoutManager(context)
+                        setHasFixedSize(true)
+                        adapter = academyAdapter
+                    }
+                }
+                ERROR -> {
+                    progress_bar.visibility = View.GONE
+                    Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
             }
-
-            academyAdapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onItemClick(courseEntity: CourseEntity) {
-
     }
 }

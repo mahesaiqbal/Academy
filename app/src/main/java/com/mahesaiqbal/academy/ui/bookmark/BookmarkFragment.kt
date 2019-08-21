@@ -5,18 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ShareCompat
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahesaiqbal.academy.R
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
-import com.mahesaiqbal.academy.ui.bookmark.BookmarkAdapter.BookmarkFragmentCallback
 import com.mahesaiqbal.academy.viewmodel.ViewModelFactory
+import com.mahesaiqbal.academy.vo.Resource
+import com.mahesaiqbal.academy.vo.Status.*
 import kotlinx.android.synthetic.main.fragment_bookmark.*
 
-class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
+class BookmarkFragment : Fragment() {
 
     lateinit var bookmarkAdapter: BookmarkAdapter
     lateinit var bookmarkViewModel: BookmarkViewModel
@@ -49,36 +50,44 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
 
             bookmarkViewModel = obtainViewModel(activity!!)
 
-            bookmarkAdapter = BookmarkAdapter(activity!!, courses as ArrayList<CourseEntity>, this)
+            bookmarkAdapter = BookmarkAdapter(activity!!, courses as ArrayList<CourseEntity>)
 
             bookmarkViewModel.getBookmarks().observe(this, getBookmark)
         }
     }
 
-    private val getBookmark = Observer<List<CourseEntity>> { course ->
-        if (course != null) {
-            progress_bar.visibility = View.GONE
-            bookmarkAdapter = BookmarkAdapter(activity!!, course as ArrayList<CourseEntity>, this)
+    private val getBookmark = Observer<Resource<List<CourseEntity>>> { courses ->
+        if (courses != null) {
+            when (courses.status) {
+                LOADING -> progress_bar.visibility = View.VISIBLE
+                SUCCESS -> {
+                    progress_bar.visibility = View.GONE
 
-            rv_bookmark.apply {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(true)
-                adapter = bookmarkAdapter
+                    bookmarkAdapter = BookmarkAdapter(activity!!, courses.data as ArrayList<CourseEntity>)
+
+                    rv_bookmark.apply {
+                        layoutManager = LinearLayoutManager(context)
+                        setHasFixedSize(true)
+                        adapter = bookmarkAdapter
+                    }
+                }
+                ERROR -> {
+                    progress_bar.visibility = View.GONE
+                    Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
             }
-
-            bookmarkAdapter.notifyDataSetChanged()
         }
     }
 
-    override fun onShareClick(courseEntity: CourseEntity) {
-        if (activity != null) {
-            val mimeType = "text/plain"
-            ShareCompat.IntentBuilder
-                .from(activity)
-                .setType(mimeType)
-                .setChooserTitle("Bagikan aplikasi ini sekarang.")
-                .setText("Segera daftar kelas %s di dicoding.com".format(courseEntity.title))
-                .startChooser()
-        }
-    }
+//    override fun onShareClick(courseEntity: CourseEntity) {
+//        if (activity != null) {
+//            val mimeType = "text/plain"
+//            ShareCompat.IntentBuilder
+//                .from(activity)
+//                .setType(mimeType)
+//                .setChooserTitle("Bagikan aplikasi ini sekarang.")
+//                .setText("Segera daftar kelas %s di dicoding.com".format(courseEntity.title))
+//                .startChooser()
+//        }
+//    }
 }
