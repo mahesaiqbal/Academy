@@ -5,7 +5,7 @@ import androidx.room.Relation
 
 data class CourseWithModule(
     @Relation(parentColumn = "courseId", entityColumn = "courseId")
-    var modules: List<ModuleEntity>
+    var modules: List<ModuleEntity>? = null
 ) {
     @Embedded
     var course: CourseEntity? = null

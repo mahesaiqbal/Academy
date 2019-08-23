@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import com.mahesaiqbal.academy.data.source.AcademyRepository
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.utils.FakeDataDummy
+import com.mahesaiqbal.academy.vo.Resource
 import org.junit.After
 import org.junit.Before
 
@@ -34,15 +35,16 @@ class BookmarkViewModelTest {
 
     @Test
     fun getBookmark() {
-        val dummyCourse: MutableLiveData<List<CourseEntity>> = MutableLiveData()
-        dummyCourse.value = FakeDataDummy.generateDummyCourses()
+        val resource: Resource<List<CourseEntity>> = Resource.success(FakeDataDummy.generateDummyCourses())
+        val dummyCourses = MutableLiveData<Resource<List<CourseEntity>>>()
+        dummyCourses.setValue(resource)
 
-        `when`(academyRepository.getAllCourses()).thenReturn(dummyCourse)
+        `when`(academyRepository.getBookmarkedCourses()).thenReturn(dummyCourses)
 
-        val observer: Observer<List<CourseEntity>> = mock(Observer::class.java) as Observer<List<CourseEntity>>
+        val observer = mock(Observer::class.java) as Observer<Resource<List<CourseEntity>>>
 
         viewModel?.getBookmarks()?.observeForever(observer)
 
-        verify(academyRepository).getBookmarkedCourses()
+        verify(observer).onChanged(resource)
     }
 }

@@ -78,7 +78,7 @@ class AcademyRepository(
             }
 
             override fun shouldFetch(data: CourseWithModule): Boolean? {
-                return data == null || data.modules == null || data.modules.size == 0
+                return data == null || data.modules == null || data.modules!!.size == 0
             }
 
             override fun createCall(): LiveData<ApiResponse<List<ModuleResponse>>> {

@@ -8,13 +8,13 @@ import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import org.junit.After
 import org.junit.Before
 
-import org.junit.Assert.*
 import org.junit.Test
-import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import com.mahesaiqbal.academy.utils.FakeDataDummy
 import org.junit.Rule
 import org.mockito.Mockito.*
-
+import com.mahesaiqbal.academy.data.source.local.entity.CourseWithModule
+import com.mahesaiqbal.academy.vo.Resource
+import org.mockito.Mockito.`when`
 
 class DetailCourseViewModelTest {
 
@@ -31,6 +31,7 @@ class DetailCourseViewModelTest {
     fun setUp() {
         viewModel = DetailCourseViewModel(academyRepository)
         viewModel!!.setCourseIdValue(courseId!!)
+        viewModel!!.setBookmark()
     }
 
     @After
@@ -39,29 +40,16 @@ class DetailCourseViewModelTest {
 
     @Test
     fun getCourse() {
-        val courseEntities: MutableLiveData<CourseEntity> = MutableLiveData()
-        courseEntities.value = dummyCourse
+        val resource: Resource<CourseWithModule> =
+            Resource.success(FakeDataDummy.generateDummyCourseWithModules(dummyCourse!!, true))
+        val courseEntities = MutableLiveData<Resource<CourseWithModule>>()
+        courseEntities.setValue(resource)
 
         `when`(academyRepository.getCourseWithModules(courseId!!)).thenReturn(courseEntities)
 
-        val observer: Observer<CourseEntity> = mock(Observer::class.java) as Observer<CourseEntity>
+        val observer = mock(Observer::class.java) as Observer<Resource<CourseWithModule>>
+        viewModel?.courseModule?.observeForever(observer)
 
-        viewModel?.getCourse()?.observeForever(observer)
-
-        verify(academyRepository).getCourseWithModules(courseId!!)
-    }
-
-    @Test
-    fun getModules() {
-        val moduleEntities: MutableLiveData<List<ModuleEntity>> = MutableLiveData()
-        moduleEntities.value = FakeDataDummy.generateDummyModules(courseId!!)
-
-        `when`(academyRepository.getAllModulesByCourse(courseId!!)).thenReturn(moduleEntities)
-
-        val observer: Observer<List<ModuleEntity>> = mock(Observer::class.java) as Observer<List<ModuleEntity>>
-
-        viewModel?.getModules()?.observeForever(observer)
-
-        verify(academyRepository).getAllModulesByCourse(courseId!!)
+        verify(observer).onChanged(resource)
     }
 }

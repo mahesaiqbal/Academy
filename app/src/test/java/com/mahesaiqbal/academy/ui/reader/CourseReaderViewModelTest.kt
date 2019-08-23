@@ -13,6 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
+import com.mahesaiqbal.academy.vo.Resource
+import org.mockito.Mockito.`when`
 
 class CourseReaderViewModelTest {
 
@@ -39,35 +41,39 @@ class CourseReaderViewModelTest {
 
     @Test
     fun getModules() {
-        val moduleEntities: MutableLiveData<List<ModuleEntity>> = MutableLiveData()
-        moduleEntities.value = dummyModules
+        val moduleEntities = MutableLiveData<Resource<List<ModuleEntity>>>()
+        val resource: Resource<List<ModuleEntity>> = Resource.success(dummyModules)
+        moduleEntities.setValue(resource)
 
         `when`(academyRepository.getAllModulesByCourse(courseId)).thenReturn(moduleEntities)
 
-        val observer: Observer<List<ModuleEntity>> = mock(Observer::class.java) as Observer<List<ModuleEntity>>
-        viewModel?.getModules()?.observeForever(observer);
+        val observer = mock(Observer::class.java) as Observer<Resource<List<ModuleEntity>>>
+        viewModel?.modules?.observeForever(observer)
 
-        verify(academyRepository).getAllModulesByCourse(courseId);
+        verify(observer).onChanged(resource)
     }
 
     @Test
     fun getSelectedModule() {
-        val moduleEntity: MutableLiveData<ModuleEntity> = MutableLiveData()
+        val moduleEntity = MutableLiveData<Resource<ModuleEntity>>()
 
         val dummyModule = dummyModules[0]
         val content =
             "<h3 class=\"fr-text-bordered\">Modul 0 : Introduction</h3><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>"
         dummyModule.contentEntity = ContentEntity(content)
+        val resource = Resource.success(dummyModule)
+        moduleEntity.setValue(resource)
 
-        moduleEntity.setValue(dummyModule)
-
-        `when`(academyRepository.getContent(courseId, moduleId!!)).thenReturn(moduleEntity)
+        `when`(academyRepository.getContent(moduleId!!)).thenReturn(
+            moduleEntity
+        )
 
         viewModel?.setSelectedModule(moduleId!!)
 
-        val observer: Observer<ModuleEntity> = mock(Observer::class.java) as Observer<ModuleEntity>
-        viewModel?.getSelectedModule()?.observeForever(observer)
+        val observer = mock(Observer::class.java) as Observer<Resource<ModuleEntity>>
 
-        verify(academyRepository).getContent(courseId, moduleId!!)
+        viewModel?.selectedModule?.observeForever(observer)
+
+        verify(observer).onChanged(resource)
     }
 }

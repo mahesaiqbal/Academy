@@ -1,6 +1,7 @@
 package com.mahesaiqbal.academy.ui.academy
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.mahesaiqbal.academy.data.source.AcademyRepository
@@ -11,6 +12,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.*
+import com.mahesaiqbal.academy.vo.Resource
+import org.mockito.Mockito.`when`
 
 class AcademyViewModelTest {
 
@@ -20,6 +23,8 @@ class AcademyViewModelTest {
 
     var viewModel: AcademyViewModel? = null
     var academyRepository: AcademyRepository = mock(AcademyRepository::class.java)
+
+    private var USERNAME = "Dicoding"
 
     @Before
     fun setUp() {
@@ -32,15 +37,18 @@ class AcademyViewModelTest {
 
     @Test
     fun getCourses() {
-        val dummyCourse: MutableLiveData<List<CourseEntity>> = MutableLiveData()
-        dummyCourse.value = FakeDataDummy.generateDummyCourses()
+        val resource: Resource<List<CourseEntity>> = Resource.success(FakeDataDummy.generateDummyCourses())
+        val dummyCourses = MutableLiveData<Resource<List<CourseEntity>>>()
+        dummyCourses.setValue(resource)
 
-        `when`(academyRepository.getAllCourses()).thenReturn(dummyCourse)
+        `when`(academyRepository.getAllCourses()).thenReturn(dummyCourses)
 
-        val observer: Observer<List<CourseEntity>> = mock(Observer::class.java) as Observer<List<CourseEntity>>
+        val observer = mock(Observer::class.java) as Observer<Resource<List<CourseEntity>>>
 
-        viewModel?.getCourses()?.observeForever(observer)
+        viewModel?.setUsername(USERNAME)
 
-        verify(academyRepository).getAllCourses()
+        viewModel?.courses?.observeForever(observer)
+
+        verify(observer).onChanged(resource)
     }
 }
