@@ -3,6 +3,7 @@ package com.mahesaiqbal.academy.data.source.local.room
 import androidx.annotation.WorkerThread
 import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.*
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.data.source.local.entity.CourseWithModule
@@ -16,7 +17,8 @@ interface AcademyDao {
 
     @WorkerThread
     @Query("SELECT * FROM courseentities where bookmarked = 1")
-    fun getBookmarkedCourse(): LiveData<List<CourseEntity>>
+//    fun getBookmarkedCourse(): LiveData<List<CourseEntity>>
+    fun getBookmarkedCourseAsPaged(): DataSource.Factory<Int, CourseEntity>
 
     @Transaction
     @Query("SELECT * FROM courseentities WHERE courseId = :courseId")

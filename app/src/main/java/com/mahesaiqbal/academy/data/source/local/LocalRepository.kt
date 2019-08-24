@@ -2,6 +2,7 @@ package com.mahesaiqbal.academy.data.source.local
 
 import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.data.source.local.entity.CourseWithModule
 import com.mahesaiqbal.academy.data.source.local.room.AcademyDao
@@ -22,7 +23,9 @@ class LocalRepository(private val mAcademyDao: AcademyDao) {
 
     fun getAllCourses(): LiveData<List<CourseEntity>> = mAcademyDao.getCourses()
 
-    fun getBookmarkedCourses(): LiveData<List<CourseEntity>> = mAcademyDao.getBookmarkedCourse()
+//    fun getBookmarkedCourses(): LiveData<List<CourseEntity>> = mAcademyDao.getBookmarkedCourse()
+
+    fun getBookmarkedCoursesPaged(): DataSource.Factory<Int, CourseEntity> = mAcademyDao.getBookmarkedCourseAsPaged()
 
     fun getCourseWithModules(courseId: String): LiveData<CourseWithModule> {
         return mAcademyDao.getCourseWithModuleById(courseId)

@@ -1,6 +1,8 @@
 package com.mahesaiqbal.academy.data.source
 
 import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.mahesaiqbal.academy.data.source.local.LocalRepository
 import com.mahesaiqbal.academy.data.source.local.entity.CourseEntity
 import com.mahesaiqbal.academy.data.source.local.entity.ModuleEntity
@@ -101,13 +103,13 @@ class AcademyRepository(
         }.asLiveData()
     }
 
-    override fun getBookmarkedCourses(): LiveData<Resource<List<CourseEntity>>> {
-        return object : NetworkBoundResource<List<CourseEntity>, List<CourseResponse>>(appExecutors) {
-            override fun loadFromDB(): LiveData<List<CourseEntity>> {
-                return localRepository.getBookmarkedCourses()
+    override fun getBookmarkedCoursesPaged(): LiveData<Resource<PagedList<CourseEntity>>> {
+        return object : NetworkBoundResource<PagedList<CourseEntity>, List<CourseResponse>>(appExecutors) {
+            override fun loadFromDB(): LiveData<PagedList<CourseEntity>> {
+                return LivePagedListBuilder(localRepository.getBookmarkedCoursesPaged(), 20).build()
             }
 
-            override fun shouldFetch(data: List<CourseEntity>): Boolean? {
+            override fun shouldFetch(data: PagedList<CourseEntity>): Boolean? {
                 return false
             }
 

@@ -47,7 +47,10 @@ class DetailCourseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_course)
 
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply {
+            title = "Detail Course"
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         detailCourseViewModel = obtainViewModel(this)
 
