@@ -22,6 +22,9 @@ import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import java.util.*
+import androidx.paging.DataSource
+import com.mahesaiqbal.academy.utils.PagedListTestUtil
+import com.mahesaiqbal.academy.vo.Resource
 
 class AcademyRepositoryTest {
 
@@ -35,6 +38,7 @@ class AcademyRepositoryTest {
     val academyRepository = FakeAcademyRepository(local, remote, instantAppExecutors)
 
     val courseResponses: ArrayList<CourseResponse> = FakeDataDummy.generateRemoteDummyCourses()
+    val courseEntities = FakeDataDummy.generateDummyCourses()
     val courseId = courseResponses[0].id
     val moduleResponses: ArrayList<ModuleResponse> = FakeDataDummy.generateRemoteDummyModules(courseId)
     val moduleId = moduleResponses[0].moduleId
@@ -80,16 +84,17 @@ class AcademyRepositoryTest {
 
     @Test
     fun getBookmarkedCourses() {
-        val dummyCourses = MutableLiveData<List<CourseEntity>>()
-        dummyCourses.setValue(FakeDataDummy.generateDummyCourses())
+        val dataSourceFactory = mock(DataSource.Factory::class.java) as DataSource.Factory<Int, CourseEntity>
 
-        `when`(local.getBookmarkedCourses()).thenReturn(dummyCourses)
+        `when`(local.getBookmarkedCoursesPaged()).thenReturn(
+            dataSourceFactory
+        )
+        academyRepository.getBookmarkedCoursesPaged()
+        val result = Resource.success(PagedListTestUtil.mockPagedList(courseEntities))
 
-        val result = LiveDataTestUtil.getValue(academyRepository.getBookmarkedCourses())
-
-        verify(local).getBookmarkedCourses()
+        verify(local).getBookmarkedCoursesPaged()
         assertNotNull(result.data)
-        assertEquals(courseResponses.size, result.data?.size)
+        assertEquals(courseEntities.size, result.data?.size)
     }
 
     @Test
